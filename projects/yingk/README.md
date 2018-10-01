@@ -1,1 +1,1 @@
-Kevin Ying ONID: yingk
+This is my assignment-1 submission!
