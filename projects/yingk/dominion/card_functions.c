@@ -56,3 +56,74 @@ void adventurer_card(struct gameState * state, int currentPlayer, int drawnTreas
         temp_counter = temp_counter - 1;
     }
 }
+
+void smithy_card(struct gameState * state, int currentPlayer, int handPos)
+{
+    //draw 3 cards
+    for(int i = 0; i < 3; i++)
+    {
+        drawCard(currentPlayer, state);
+    }
+    //discard card
+    discardCard(handPos, currentPlayer, state, 0);
+
+}
+
+void village_card(struct gameState * state, int currentPlayer, int handPos)
+{
+    //Draw card
+    drawCard(currentPlayer, state);
+    //Add 2 actions
+    state->numActions = state->numActions + 2;
+    //Discard card after effects are finished
+    discardCard(handPos, currentPlayer, state, 0);
+
+}
+
+//parameters are state struct, int currentPlayer, int card choice, int handPos
+void salvager_card(struct gameState* state , int currentPlayer, int choice, int handPos)
+{
+    //buys +1
+    state->numBuys++;
+    if(choice)
+    {
+        //gain coins = to value of card to be discarded
+        state->coins = state->coins + getCost(handCard(choice, state));
+        //discard card into destroy pile
+        discardCard(choice, currentPlayer, state, 1);
+    }
+    //discard the salvager card into recycle pile
+    discardCard(handPos, currentPlayer, state, 0 );
+
+}
+
+//parameters are state struct, int currentPlayer, int handPos
+int treasure_map_card(struct gameState * state, int currentPlayer, int handPos)
+{
+    int index = -1;
+    for(int i = 0; i < state->handCount[currentPlayer]; i++)
+    {
+        //if the i'th card is a treasure map that isn't the initial treasure map...
+        if (state->hand[currentPlayer][i] == treasure_map && i != handPos)
+        {
+            index = i;
+            break;
+        }
+
+    }
+    if(index > -1) //if a treasure map was found....
+    {
+        //discard both into the trash pile
+        discardCard(handPos, currentPlayer, state, 1);
+        discardCard(index, currentPlayer, state, 1);
+        //gain 4 gold cards
+        for(int i = 0 ; i < 4; i++)
+        {
+            gainCard(gold, state, 1, currentPlayer);
+        }
+        return 1;
+    }
+    //else no 2nd treasure map found
+    return -1;
+
+}
