@@ -24,6 +24,24 @@ testAll: dominion.o testSuite.c
 interface.o: interface.h interface.c
 	gcc -c interface.c -g  $(CFLAGS)
 
+randomtestcard1: randomtestcard1.c dominion.o rngs.o
+	gcc -o randomtest1 -g randomtestcard1.c dominion.o rngs.o $(CFLAGS)
+
+randomtestcard2: randomtestcard2.c dominion.o rngs.o
+	gcc -o randomtest2 -g randomtestcard2.c dominion.o rngs.o $(CFLAGS)
+
+randomtestadventurer: randomtestadventurer.c dominion.o rngs.o
+	gcc -o randomtestadventurer -g randomtestadventurer.c dominion.o rngs.o $(CFLAGS)
+
+randomtestresults: randomtestcard1 randomtestcard2 randomtestadventurer
+	touch randomtestresult.out
+	./randomtest1 >> randomtestresult.out
+	./randomtest2 >> randomtestresult.out
+	./randomtestadventurer >> randomtestresult.out
+	gcov dominion.c -b  >> randomtestresult.out
+	cat dominion.c.gcov >> randomtestresult.out
+	
+
 runtests: testDrawCard 
 	./testDrawCard &> unittestresult.out
 	gcov dominion.c >> unittestresult.out
@@ -37,3 +55,6 @@ all: playdom player
 
 clean:
 	rm -f *.o playdom.exe playdom player player.exe  *.gcov *.gcda *.gcno *.so *.out testDrawCard testDrawCard.exe
+
+cleantest:
+	rm -f *.o playdom.exe playdom player player.exe  *.gcov *.gcda *.gcno *.so *.out testDrawCard testDrawCard.exe randomtest1 randomtest2 randomtestadventurer
